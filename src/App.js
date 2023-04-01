@@ -1,16 +1,49 @@
 import './App.css';
+import {supabase} from './supabaseClient'
+import { useState } from 'react';
 
-const books = [{title : "The Giver", author : "Lois Lowry", isbn : "0544336267", available : true},
-{title : "The Odyssey", author : "Homer", isbn : "9780140268867", available : true},
-{title : "Animal Farm", author : "George Orwell", isbn : "9780451526342", available : false},
-{title : "To Kill a Mockingbird", author : "Harper Lee", isbn : "0446310786", available : true},]
+
+// A React component that queries and displays data from Supabase
+function Library() {
+  // The useState hook lets us store data in a component across renders
+  // setMyBooks is a setter function that updates the state of myBooks
+  const [myBooks, setMyBooks] = useState([]);
+  // This should look familar from Codepen
+  async function getBooks() {
+    let { data: books, error } = await supabase
+      .from('books')
+      .select('*')
+    // Update the state
+    setMyBooks(books);
+  }
+  // Execute the function
+  getBooks();
+  // Below is what displays when you use <Library />
+  return (
+    <table className='books'>
+    {
+      myBooks.map(b => (
+        <tr>
+          <td>{b.title}</td>
+          <td>{b.author}</td>
+          <td>{b.isbn}</td>
+        </tr>
+      ))
+    }
+    </table>
+  )
+}
+
+const books = [{item : "The Giver", price : "$9.99", available : true},
+{item : "The Odyssey", price : "$4.99", available : true},
+{item : "Animal Farm", price : "$20", available : false},
+{item : "To Kill a Mockingbird", price : "$8.00", available : true},]
 
 function Bookshelf() {
   const booklist = books.map(book =>
     <tr>
-      <td>{book.title}</td>
-      <td>{book.author}</td>
-      <td>{book.isbn}</td>
+      <td>{book.item}</td>
+      <td>{book.price}</td>
       <td style={{
         backgroundColor: book.available ? 'green' : 'red'
       }}><BuyButton></BuyButton></td>
@@ -20,8 +53,7 @@ function Bookshelf() {
     <table className="books">
       <tr>
         <th>Title</th>    
-        <th>Author</th>
-        <th>ISBN</th>
+        <th>Price</th>
         <th>Available</th>
       </tr>
       {booklist}
@@ -52,6 +84,8 @@ function App() {
       <Navbar></Navbar>
       <header className="App-header">
         <Bookshelf></Bookshelf>
+        <h2>Supabase Books</h2>
+        <Library></Library>
       </header>
     </div>
   );
