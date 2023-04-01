@@ -10,7 +10,7 @@ function Library() {
   const [myBooks, setMyBooks] = useState([]);
   // This should look familar from Codepen
   async function getBooks() {
-    let { data: books, error } = await supabase
+    let { data: books } = await supabase
       .from('books')
       .select('*')
     // Update the state
